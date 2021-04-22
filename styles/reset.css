@@ -93,6 +93,7 @@ input {
 	font: inherit;
 	vertical-align: baseline;
 	text-decoration: none;
+	outline: none;
 	background: 0; /* Added */
 }
 
