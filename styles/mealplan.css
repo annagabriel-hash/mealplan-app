@@ -1,0 +1,588 @@
+/*********************************** 
+  || Table of Contents          ||
+	|| *default styles*				  	||
+  ||  A. Global Styles          ||      
+  ||  B. Content                ||   
+  ||    1. Typography           ||
+  ||  C. Color Styles           ||    
+  ||  D. Components             ||  
+	||	  1. Form       	       	||       
+  ||	  2. Custom Checkbox     	||       
+	||	  3. Button: square      	||       
+	||    4. Modal       	       	||       
+	||    5. Notification	       	||       
+	||    6. Card        	       	||           
+  ||  E. Layout/Utilities       ||  
+	||    1. Display       		    ||
+	||    2. Flex: *row    		    ||
+	||    3. Margin       		    ||
+  ||  F. Site Sections          ||
+  ||  G. For Javascript         ||
+***********************************/
+/* =====================
+    A. GLOBAL STYLES
+  ====================== 
+*/
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto:wght@300;400;500;700;900&display=swap');
+
+* {
+	box-sizing: border-box;
+	color: #1e212b;
+}
+html,
+body,
+main {
+	font-family: 'Roboto', sans-serif;
+	width: 100vw;
+	max-width: 100%;
+}
+body {
+	position: relative;
+}
+section {
+	min-height: 100vh;
+}
+legend {
+	margin-bottom: 0.5rem;
+}
+/* =====================
+    B. CONTENT
+  ====================== 
+*/
+/* || TYPOGRAPHY */
+h1 {
+	font-family: 'Lato', sans-serif;
+	font-size: 2.5rem;
+	font-weight: 500;
+}
+h2 {
+	font-family: 'Lato', sans-serif;
+	font-size: 2.2rem;
+	font-weight: 700;
+}
+h3,
+.h3 {
+	font-family: 'Lato', sans-serif;
+	font-size: 1.3rem;
+	font-weight: 500;
+	line-height: 1.5em;
+}
+legend {
+	font-size: 1.618rem;
+	font-weight: 500;
+}
+input,
+select,
+option {
+	line-height: 1.5;
+	font-family: 'Lato', sans-serif;
+}
+small {
+	font-size: 0.8rem;
+}
+button,
+.btn {
+	font-family: 'Roboto', sans-serif;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+}
+.text-sm {
+	font-size: small;
+}
+.text-xl {
+	font-size: x-large;
+}
+.text-md {
+	font-weight: 500;
+}
+.text-bold {
+	font-weight: 700;
+}
+.text-italic {
+	font-style: italic;
+}
+.material-icons-round {
+	font-size: 20px;
+}
+.custom-checkbox-label {
+	font-size: 24px;
+}
+.card-title {
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+/* =====================
+    C. COLOR STYLES
+  ====================== 
+*/
+
+/* || FORMS */
+input:focus,
+input:active {
+	border-color: #80bdff;
+	box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+input:focus,
+input:hover {
+	background-color: #fff;
+}
+
+.btn {
+	background-color: rgb(255, 200, 0);
+}
+/* Form alert messages */
+.input-grp.success input {
+	border-color: #7fc926;
+}
+.input-grp.success span.material-icons-round.success {
+	color: #61a81a;
+}
+.input-grp.error input {
+	border-color: #db4f6f;
+}
+.input-grp.error span.material-icons-round.error,
+.input-grp.error small {
+	color: #db4f6f;
+}
+/* || NOTIFICATIONS */
+
+/* =====================
+    D. COMPONENTS
+  ====================== 
+*/
+/* || FORMS */
+label {
+	display: inline-block;
+	/* vertical | horizontal */
+	margin: 0.5rem 0;
+	cursor: pointer;
+}
+.input-grp {
+	position: relative;
+	padding-bottom: 5px;
+}
+/* Form icon position */
+.input-grp span {
+	position: absolute;
+	top: 42px;
+	right: 10px;
+	visibility: hidden;
+}
+/* Form alert messages */
+.input-grp small {
+	visibility: hidden;
+}
+.input-grp.success span.material-icons-round.success,
+.input-grp.error span.material-icons-round.error,
+.input-grp.error small {
+	visibility: visible;
+}
+/* Input Elements */
+input,
+select {
+	display: block;
+	width: calc(100% - 35px);
+	/* vertical | horizontal */
+	padding: 0.375rem 0.75rem;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 2px solid #ced4da;
+}
+/* || CUSTOM CHECKBOX */
+.custom-checkbox {
+	padding: 0;
+}
+.custom-checkbox > label {
+	width: 100%;
+	padding: 12px 25px;
+	color: #3c454c;
+	background-color: rgb(250, 251, 252);
+	position: relative;
+	z-index: 2;
+	transition: color 200ms ease-in;
+	overflow: hidden;
+	line-height: 36px;
+}
+/* To include animation */
+.custom-checkbox > label::before {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	content: '';
+	background-color: rgb(255, 237, 173);
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%) scale3d(1, 1, 1);
+	transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0;
+	z-index: -1;
+}
+.custom-checkbox input:checked ~ label::before {
+	transform: translate(-50%, -50%) scale3d(56, 56, 1);
+	opacity: 1;
+}
+/* Create custom checkbox */
+.custom-checkbox > label::after {
+	width: 32px;
+	height: 32px;
+	content: '';
+	border: 1.5px solid #d1d7dc;
+	background-color: #fff;
+	background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+	background-repeat: no-repeat;
+	background-position: 4px 5px;
+	border-radius: 50%;
+	z-index: 2;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 30px;
+	transition: all 200mx ease-in;
+}
+.custom-checkbox input:checked ~ label {
+	font-weight: 600;
+}
+.custom-checkbox input:checked ~ label::after {
+	background-color: #54e0c7;
+	border-color: #54e0c7;
+}
+.custom-checkbox > input {
+	width: 32px;
+	height: 32px;
+	z-index: 2;
+	position: absolute;
+	right: 30px;
+	/* to align middle */
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	visibility: hidden;
+}
+
+/* || BUTTON */
+.btn-grp {
+	margin: 1rem 0;
+}
+.btn {
+	/* width | styles | color */
+	border: 2px solid transparent;
+	border-radius: 4px;
+	cursor: pointer;
+	display: inline-block;
+	/* vertical | horizontal */
+	padding: 0.4rem 1.5rem;
+	text-align: center;
+	min-width: 120px;
+	vertical-align: middle;
+	box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+}
+.btn:hover,
+.btn:focus {
+	box-shadow: 0 1px 3px rgba(32, 33, 36, 0.28);
+}
+.btn:active {
+	box-shadow: none;
+}
+/* || MODAL */
+.modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(3px);
+	z-index: 1;
+}
+.modal-content {
+	background-color: white;
+	border-radius: 6px;
+	box-shadow: 0 3rem 5rem rgba(0, 0, 0, 0.3);
+	padding: 1.5rem;
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 80vmin;
+	z-index: 2;
+	min-height: 500px;
+}
+/* || NOTIFICATION */
+
+.alert {
+	padding: 20px 40px;
+	min-width: 360px;
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 6px;
+}
+.alert-close {
+	padding: 20px 15px;
+	position: absolute;
+	right: 0px;
+	top: 0;
+	text-align: center;
+	cursor: pointer;
+}
+/* || CARD */
+.cards {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-around;
+}
+.card {
+	display: flex;
+	flex-direction: column;
+	/* box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; */
+	border-radius: 8px;
+	/* top | right | bottom | left */
+	margin: 0.5rem 1.2rem 0.5rem 0;
+	width: 100%;
+	flex-basis: 250px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-width: 0;
+}
+.card-img {
+	/* clip-path: content-box; */
+	/* clip-path: inset(20px 20px); */
+	border-radius: 8px;
+	width: 100%;
+	height: 160px;
+}
+.card-content {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+.dot-separator > li {
+	display: inline-block;
+}
+.dot-separator > li::after {
+	content: '\2022';
+	font-size: large;
+	margin-left: 2px;
+	margin-right: 2px;
+	position: relative;
+	top: 3px;
+}
+.dot-separator > li:last-child::after {
+	content: '';
+}
+.card .btn-grp {
+	width: 100%;
+}
+.card .btn-grp > .btn {
+	flex-grow: 1;
+}
+/* =====================
+    E. LAYOUT/UTILITIES
+  ====================== 
+*/
+/* || FLEX */
+.d-flex {
+	display: flex;
+	flex-direction: column;
+	/* align-items: center; */
+	justify-content: center;
+}
+.f-row {
+	flex-direction: row;
+}
+/* || ALIGNMENT */
+.text-center {
+	text-align: center;
+}
+/* || SPACING */
+/* Margin */
+.mt-xs {
+	margin-top: 1rem;
+}
+.mb-xs {
+	margin-bottom: 1rem;
+}
+.mr-1 {
+	margin-right: 1.618rem;
+}
+.mr-2 {
+	margin-right: calc(1.618rem * 2);
+}
+/* Padding */
+.pt-xs {
+	padding-top: 0.5rem;
+}
+.pt-1 {
+	padding-top: 1rem;
+}
+.pl-1 {
+	padding-left: 1rem;
+}
+.p-1 {
+	padding: 1rem;
+}
+/* =====================
+    F. SITE SECTIONS
+  ====================== 
+*/
+/* Navigation Bar */
+.nav-bar {
+	display: flex;
+	width: 70vw;
+	max-width: 420px;
+	justify-content: space-around;
+	padding: 0.8rem 0;
+	position: fixed;
+	bottom: 12px;
+	/* Center navbar */
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 30px;
+	background-color: white;
+	z-index: 2;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.16);
+}
+.nav-items {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	padding: 0.3rem 1rem;
+	background-color: white;
+	border-radius: 50px;
+	transition: background-color 0.6s linear;
+}
+.nav-items > .material-icons-round {
+	font-size: 30px;
+}
+
+.nav-items.active {
+	background-color: rgba(255, 202, 10, 0.1);
+}
+.nav-items.active > .material-icons-round {
+	color: rgb(255, 132, 39);
+}
+
+/* Section 1: Login Page */
+.card-login {
+	padding-left: 1.618rem;
+}
+section:nth-child(1) {
+	position: relative;
+}
+/* section:nth-child(1) h2,
+section:nth-child(1) label {
+	/* color: rgb(255, 200, 0); */
+/* offset-x | offset-y | blur-radius | color */
+/* text-shadow: 3px 5px 10px #666;
+} */
+#signup-link {
+	color: rgb(255, 132, 39);
+	cursor: pointer;
+}
+/* Section 4: My Fridge */
+
+#fridge-top {
+	position: relative;
+	height: 180px;
+	background-image: url(https://images.unsplash.com/photo-1563865436874-9aef32095fad?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80);
+	background-size: cover;
+	margin-bottom: 40px;
+}
+#fridge-top > h2 {
+	color: white;
+	padding-top: 92px;
+	text-shadow: 0px 9px 4px black;
+}
+#fridgeForm {
+	position: absolute;
+	width: 95%;
+	bottom: -39px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+#fridgeForm .input-grp span {
+	top: 10px;
+	right: 42px;
+}
+#mealForm {
+	padding: 0 1em;
+}
+#list-fridge {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+#list-fridge > li {
+	flex-basis: 250px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	margin-right: 1em;
+}
+.meal-list .btn-grp {
+	margin-bottom: 0;
+	align-self: center;
+}
+.meal-list .btn {
+	min-width: 0;
+}
+/* Section 5: Recipe */
+article {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0.5em;
+}
+.article-top {
+	position: relative;
+	width: 100%;
+	padding: 0.4rem;
+}
+.article-top > button {
+	position: absolute;
+	left: 2px;
+}
+article h2 {
+	font-size: 18px;
+}
+.article-img {
+	border-radius: 8px;
+	width: 100%;
+	flex-basis: 20vh;
+}
+.article-content {
+	flex-basis: 80vh;
+}
+.article-content > h3 {
+	padding-top: 0.5em;
+	padding-bottom: 0.3em;
+}
+.article-ing > p {
+	font-weight: 600;
+	padding-top: 0.5em;
+}
+.article-ing li {
+	list-style-type: disc;
+	list-style-position: inside;
+	padding-left: 0.5em;
+}
+.article-content > a {
+	width: 100%;
+	margin-top: 0.5em;
+}
+
+/* =====================
+    G. JAVASCRIPT
+  ====================== 
+*/
+.d-none {
+	display: none;
+}
