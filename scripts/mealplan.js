@@ -217,6 +217,61 @@ function maintainUser(userInfo, action = 'search') {
 		console.log('User created');
 	}
 }
+/**
+ * Async function that request via API the meals that can be cooked from the ingredients(array) provided
+ * @param {Array<string>} ingredients - ingredients list
+ * @returns {Promise} - Promise object representing result of meal search
+ */
+async function mealSearch(ingredients) {
+	/** @type {string} - This is the requestURL when searching for recipes by ingredient */
+	let requestUrl = 'https://api.spoonacular.com/recipes/findByIngredients?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
+	/** @type {string} - This is the comma separated list of ingredients for the search query	 */
+	let ingredientReq = `ingredients=${ingredients.join(',')}`;
+	/** @type {string} - Maximum number of results to be returned. The default is 10 to limit request	 */
+	let maxHitsReq = `number=10`;
+	/** @type {string} - Request url considering the search query */
+	let url = `${requestUrl}&${ingredientReq}&${maxHitsReq}`;
+	try {
+		// 1. Fetch data in API
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		// 2. Store data
+		const data = await response.json();
+		activeUser.addMealSearchList(data);
+		console.log('3. Request in API the meals that can be cooked\nDone fetching recipe info');
+	} catch (error) {
+		console.log(error);
+	}
+}
+/**
+ * Async function that searches for the recipe information
+ * Updates the activeUser.searchlist
+ * @param {Array<string>} recipes - recipe ids for searching recipe
+ * @returns {Promise}  - Promise object representing result of recipe search
+ */
+async function recipeInfoSearch(recipes) {
+	let requestUrl = 'https://api.spoonacular.com/recipes/informationBulk?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
+	let idsReq = `ids=${recipes.join(',')}`;
+	let url = `${requestUrl}&${idsReq}`;
+	// 1. Fetch data in API
+	try {
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		// 2. Store data
+		const data = await response.json();
+		updateRecipeInfo(data);
+	} catch (error) {
+		console.log(err);
+	}
+}
 function createLI(content) {
 	const newLI = document.createElement('li');
 	newLI.textContent = content;
@@ -342,66 +397,10 @@ function displayRecipeBtns(recipeLink) {
 
 	return newDiv;
 }
-/**
- * Async function that request via API the meals that can be cooked from the ingredients(array) provided
- * @param {Array<string>} ingredients - ingredients list
- * @returns {Promise} - Promise object representing result of mealSearch
- */
-async function mealSearch(ingredients) {
-	/** @type {string} - This is the requestURL when searching for recipes by ingredient */
-	let requestUrl = 'https://api.spoonacular.com/recipes/findByIngredients?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
-	/** @type {string} - This is the comma separated list of ingredients for the search query	 */
-	let ingredientReq = `ingredients=${ingredients.join(',')}`;
-	/** @type {string} - Maximum number of results to be returned. The default is 10 to limit request	 */
-	let maxHitsReq = `number=10`;
-	/** @type {string} - Request url considering the search query */
-	let url = `${requestUrl}&${ingredientReq}&${maxHitsReq}`;
-	try {
-		// 1. Fetch data in API
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-		// 2. Store data
-		const data = await response.json();
-		activeUser.addMealSearchList(data);
-		console.log('3. Request in API the meals that can be cooked\nDone fetching recipe info');
-	} catch (error) {
-		console.log(error);
-	}
-}
-/**
- * Async function that searches for the recipe information
- * Updates the activeUser.searchlist
- * @param {Array<string>} recipes - recipe ids for searching recipe
- */
-async function recipeInfoSearch(recipes) {
-	let requestUrl = 'https://api.spoonacular.com/recipes/informationBulk?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
-	let idsReq = `ids=${recipes.join(',')}`;
-	let url = `${requestUrl}&${idsReq}`;
-	// 1. Fetch data in API
-	try {
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-		// 2. Store data
-		const data = await response.json();
-		updateRecipeInfo(data);
-		console.log('6. Search recipe information\nDone fetching recipe info');
-		// recipesInfo = data;
-	} catch (error) {
-		console.log(err);
-	}
-}
+
 function updateRecipeInfo(newRecipeInfo) {
-	console.log('Previous array length', recipesInfo.length);
 	recipesInfo = [...recipesInfo, ...newRecipeInfo];
-	console.log('New array length', recipesInfo.length);
+	return recipesInfo;
 }
 function extractIds(recipesList) {
 	return recipesList.map(({ id }) => id);
