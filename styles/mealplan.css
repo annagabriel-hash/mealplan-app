@@ -503,7 +503,9 @@ section:nth-child(1) label {
 	position: relative;
 	height: 180px;
 	background-image: url(https://images.unsplash.com/photo-1563865436874-9aef32095fad?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80);
+	background-image: url(../assets/ingredients2.jpg);
 	background-size: cover;
+	background-position: center;
 	margin-bottom: 40px;
 }
 #fridge-top > h2 {
@@ -529,12 +531,16 @@ section:nth-child(1) label {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	padding: 10px 0 20px 0;
 }
 #list-fridge > li {
 	flex-basis: 250px;
 	flex-grow: 1;
 	flex-shrink: 1;
 	margin-right: 1em;
+}
+.meal-list {
+	margin: 20px 0;
 }
 .meal-list .btn-grp {
 	margin-bottom: 0;
