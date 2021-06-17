@@ -38,6 +38,7 @@ main {
 }
 body {
 	position: relative;
+	overflow: auto;
 }
 section {
 	min-height: 100vh;
