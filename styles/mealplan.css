@@ -226,6 +226,16 @@ select {
 	transform: translate(-50%, -50%) scale3d(56, 56, 1);
 	opacity: 1;
 }
+@media screen and (min-width: 600px) {
+	.custom-checkbox input:checked ~ label::before {
+		transform: translate(-50%, -50%) scale3d(100, 100, 1);
+	}
+}
+@media screen and (min-width: 1055px) {
+	.custom-checkbox input:checked ~ label::before {
+		transform: translate(-50%, -50%) scale3d(150, 150, 1);
+	}
+}
 /* Create custom checkbox */
 .custom-checkbox > label::after {
 	width: 32px;
