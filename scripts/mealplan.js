@@ -19,6 +19,7 @@ const FORM = {
 	init() {
 		FORM.fridgeFormListeners();
 		FORM.mealFormListeners();
+		FORM.mealPlanListeners();
 	},
 	fridgeFormListeners() {
 		let form = document.forms['fridgeForm'];
@@ -48,7 +49,7 @@ const FORM = {
 	},
 	mealFormListeners() {
 		let form = document.forms['mealForm'];
-
+		let getMealSearch = document.querySelector('#meal-search-list');
 		// When the form gets submitted
 		form.addEventListener('submit', async (ev) => {
 			ev.preventDefault();
@@ -60,16 +61,27 @@ const FORM = {
 			await mealSearch(ingredients);
 			// 4. Extract mealSearch Ids
 			let recipeSearchIds = activeUser.mealsSearchList.map(({ id }) => id);
+			console.log('recipeSearchIds', recipeSearchIds);
 			// 5. Check which are not in the cache
 			let recipeCacheIds = extractIds(recipesInfo);
 			recipeSearchIds = recipeSearchIds.filter((id) => !recipeCacheIds.includes(id));
+			console.log('recipeSearchIds', recipeSearchIds);
 			// 6. Search recipe information
-			await recipeInfoSearch(recipeSearchIds);
+			if (recipeSearchIds.length !== 0) {
+				await recipeInfoSearch(recipeSearchIds);
+			}
 			// 7. Display recipe information
 			activeUser.mealsSearchList.forEach((mealResult) => {
-				displaymealSearch(mealResult);
+				displaymealSearch(getMealSearch, mealResult, 'Save');
 			});
 		});
+	},
+	mealPlanListeners() {
+		let getMealSearch = document.querySelector('#meal-search-list');
+		let getMealPlan = document.querySelector('#meal-plans');
+		// Onclick of the save button
+		getMealSearch.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealSearch, 'save'));
+		getMealPlan.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealPlan, 'delete'));
 	},
 	formatStrToLower(ev) {
 		let field = ev.target;
@@ -112,6 +124,19 @@ const FORM = {
 		inputElems.forEach((inputElem) => FORM.validateInputs(inputElem));
 		return form.checkValidity();
 	},
+	updateMealPlan(ev, ulElem, action) {
+		let btn = ev.target;
+		console.log('btn clicked');
+		if (btn.nodeName !== 'BUTTON') return;
+		const getMealList = ulElem.children;
+		const getMealCard = btn.parentElement.parentElement;
+		// 1. Get index of data as basis to search meal plan
+		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
+		// 2. Update meal plan
+		activeUser.updateMealPlan(action, index);
+		// 3. Disable btn to prevent being clicked again
+		btn.setAttribute('disabled', 'true');
+	},
 };
 FORM.init();
 /* =====================
@@ -138,12 +163,20 @@ class User {
 		this.mealsSearchList = [];
 		this.mealPlans = [];
 	}
-	addMealPlan(mealId) {
-		this.mealPlans.push(mealId);
-	}
-	removeMealPlan(mealIds) {
-		let updatedMealPlan = this.mealPlan.filter((meal) => mealIds.includes(meal));
-		return updatedMealPlan;
+	updateMealPlan(action, index) {
+		// Missing values passed
+		if (!action || !index) return;
+		if (action === 'delete') {
+			this.mealPlans.splice(index, 1);
+			console.log('user meal plan updated');
+		} else {
+			// Save action
+			let savedMealPlan = this.mealsSearchList[index];
+			let id = savedMealPlan.id;
+			// Check if meal plan is already existing
+			if (this.mealPlans.includes(savedMealPlan.id)) return;
+			this.mealPlans.push(savedMealPlan);
+		}
 	}
 	addFridgeList(item) {
 		this.fridgeList.push(item);
@@ -269,7 +302,7 @@ async function recipeInfoSearch(recipes) {
 		const data = await response.json();
 		updateRecipeInfo(data);
 	} catch (error) {
-		console.log(err);
+		console.log(error);
 	}
 }
 function createLI(content) {
@@ -277,10 +310,9 @@ function createLI(content) {
 	newLI.textContent = content;
 	return newLI;
 }
-function displayFridgeLI(ingredient) {
+function displayFridgeLI(ingredient, index = activeUser.fridgeList.length) {
 	const getFridgeList = document.querySelector('#list-fridge');
 
-	let counter = activeUser.fridgeList.length;
 	// 1. Create elements
 	const newLI = document.createElement('li');
 	newLI.className = 'input-grp custom-checkbox';
@@ -289,12 +321,12 @@ function displayFridgeLI(ingredient) {
 	Object.assign(newInput, {
 		type: 'checkbox',
 		name: 'ingredient',
-		id: `opt${counter}`,
+		id: `opt${index}`,
 		value: ingredient,
 	});
 
 	const newLabel = document.createElement('label');
-	newLabel.setAttribute('for', `opt${counter}`);
+	newLabel.setAttribute('for', `opt${index}`);
 	newLabel.textContent = ingredient;
 
 	// 2. Append elements
@@ -302,8 +334,15 @@ function displayFridgeLI(ingredient) {
 	newLI.appendChild(newLabel);
 	getFridgeList.appendChild(newLI);
 }
-// function to display meal search
-function displaymealSearch(mealSearch) {
+/**
+ * Function to display meal search in HTML
+ * @param {HTMLElement} listElem - ul element to display data.
+ * @param {Object} mealSearch - mealSearch API results
+ * @param {string} btnName - button name ('Save'/'Delete')
+ * "Save" - For the meal search (to save in the meal plan)
+ * "Delete" - For the meal plan list
+ */
+function displaymealSearch(listElem, mealSearch, btnName) {
 	let recipeInfo = recipesInfo.find((recipes) => recipes.id === mealSearch.id);
 	// 1. Create elements
 	const newRecipeLI = document.createElement('li');
@@ -333,14 +372,13 @@ function displaymealSearch(mealSearch) {
 	newRecipeContentDiv.appendChild(newRecipeDescDiv);
 
 	// Recipe Buttons
-	const newRecipeBtns = displayRecipeBtns(recipeInfo.sourceUrl);
+	const newRecipeBtns = displayRecipeBtns(btnName);
 
 	// 2. Append to recipe list
-	let getRecipeList = document.querySelector('#meal-search-list');
 	newRecipeLI.appendChild(newRecipeImg);
 	newRecipeLI.appendChild(newRecipeContentDiv);
 	newRecipeLI.appendChild(newRecipeBtns);
-	getRecipeList.appendChild(newRecipeLI);
+	listElem.appendChild(newRecipeLI);
 }
 
 function displayRecipeDesc(mins, servings) {
@@ -375,21 +413,19 @@ function displayMissingIngredients(missingIngredientCount) {
 
 	return newPar;
 }
-function displayRecipeBtns(recipeLink) {
+function displayRecipeBtns(btnName) {
 	const newDiv = document.createElement('div');
 	newDiv.className = 'btn-grp d-flex f-row';
 
 	const newBtn = document.createElement('button');
 	newBtn.setAttribute('type', 'button');
 	newBtn.className = 'btn mr-1';
-	newBtn.textContent = 'Save';
+	newBtn.textContent = btnName;
 
 	const newLink = document.createElement('a');
 	Object.assign(newLink, {
-		href: recipeLink,
+		href: '#recipe',
 		className: 'btn',
-		target: '_blank',
-		rel: 'noreferrer noopener',
 		textContent: 'View',
 	});
 	newDiv.appendChild(newBtn);
@@ -406,18 +442,16 @@ function extractIds(recipesList) {
 	return recipesList.map(({ id }) => id);
 }
 // Test Data
-recipesInfo = JSON.parse(localStorage.getItem('recipesInfo'));
+recipesInfo = JSON.parse(localStorage.recipesInfo);
 mealsSearchList = JSON.parse(localStorage.getItem('mealsSearchList'));
-let testUser = {
-	username: 'AGABRIEL',
-	firstName: 'ANNA',
-	lastName: 'GABRIEL',
-	email: 'yssg@g.com',
-	password: '1234',
-};
+let testUser = JSON.parse(localStorage['mPlan.users'])[0];
 maintainUser(testUser, 'create');
 activeUser = maintainUser('AGABRIEL');
-activeUser.addFridgeList('apples');
-activeUser.addFridgeList('banana');
-activeUser.addFridgeList('flour');
-activeUser.addFridgeList('cinnamon');
+activeUser.fridgeList.push(...testUser.fridgeList);
+activeUser.mealsSearchList.push(...testUser.mealsSearchList);
+activeUser.mealPlans.push(...testUser.mealPlans);
+activeUser.fridgeList.forEach((item, index) => displayFridgeLI(item, index));
+const getMealSearch = document.querySelector('#meal-search-list');
+activeUser.mealsSearchList.forEach((mealResult) => {
+	displaymealSearch(getMealSearch, mealResult, 'Save');
+});
