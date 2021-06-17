@@ -17,10 +17,10 @@ let mealsSearchList = {}; // results for the meal
 
 const FORM = {
 	init() {
-		FORM.addEventListener();
-		FORM.addEventListener2();
+		FORM.fridgeFormListeners();
+		FORM.mealFormListeners();
 	},
-	addEventListener() {
+	fridgeFormListeners() {
 		let form = document.forms['fridgeForm'];
 		let ingredient = form.elements['fridgeitem'];
 		// After changing whole value
@@ -46,9 +46,31 @@ const FORM = {
 			}
 		});
 	},
-	addEventListener2() {
+	mealFormListeners() {
+		let form = document.forms['mealForm'];
 
-	}
+		// When the form gets submitted
+		form.addEventListener('submit', async (ev) => {
+			ev.preventDefault();
+			// 1. Get checked ingredients
+			let getCheckedIngred = form.querySelectorAll('input:checked');
+			/** @type {Array<string>} - ingredients as search query for the recipes */
+			let ingredients = Array.prototype.map.call(getCheckedIngred, ({ value }) => value);
+			// 3. Request in API the meals that can be cooked
+			await mealSearch(ingredients);
+			// 4. Extract mealSearch Ids
+			let recipeSearchIds = activeUser.mealsSearchList.map(({ id }) => id);
+			// 5. Check which are not in the cache
+			let recipeCacheIds = extractIds(recipesInfo);
+			recipeSearchIds = recipeSearchIds.filter((id) => !recipeCacheIds.includes(id));
+			// 6. Search recipe information
+			await recipeInfoSearch(recipeSearchIds);
+			// 7. Display recipe information
+			activeUser.mealsSearchList.forEach((mealResult) => {
+				displaymealSearch(mealResult);
+			});
+		});
+	},
 	formatStrToLower(ev) {
 		let field = ev.target;
 		field.value = field.value.toLowerCase().trim();
@@ -96,7 +118,16 @@ FORM.init();
 		B. CLASSES
 	====================== 
 */
+/** Class representing a new user */
 class User {
+	/**
+	 * Creates a new user
+	 * @param {string} username - username
+	 * @param {string} firstName - first name of user (in uppercase)
+	 * @param {string} lastName - last name of user (in uppercase)
+	 * @param {string} email - email of user
+	 * @param {string} password -  password of user
+	 */
 	constructor(username, firstName, lastName, email, password) {
 		this.username = username;
 		this.firstName = firstName;
@@ -104,6 +135,7 @@ class User {
 		this.email = email;
 		this.password = password;
 		this.fridgeList = [];
+		this.mealsSearchList = [];
 		this.mealPlans = [];
 	}
 	addMealPlan(mealId) {
@@ -115,6 +147,13 @@ class User {
 	}
 	addFridgeList(item) {
 		this.fridgeList.push(item);
+	}
+	/**
+	 * This function stores the API result in the user object
+	 * @param {Object} mealSearchResult - result from JSON
+	 */
+	addMealSearchList(mealSearchResult) {
+		this.mealsSearchList = mealSearchResult;
 	}
 }
 
@@ -196,6 +235,7 @@ function displayFridgeLI(ingredient) {
 		type: 'checkbox',
 		name: 'ingredient',
 		id: `opt${counter}`,
+		value: ingredient,
 	});
 
 	const newLabel = document.createElement('label');
@@ -208,8 +248,7 @@ function displayFridgeLI(ingredient) {
 	getFridgeList.appendChild(newLI);
 }
 // function to display meal search
-function displaymealSearch() {
-	let mealSearch = mealsSearchList[0];
+function displaymealSearch(mealSearch) {
 	let recipeInfo = recipesInfo.find((recipes) => recipes.id === mealSearch.id);
 	// 1. Create elements
 	const newRecipeLI = document.createElement('li');
@@ -241,12 +280,12 @@ function displaymealSearch() {
 	// Recipe Buttons
 	const newRecipeBtns = displayRecipeBtns(recipeInfo.sourceUrl);
 
-	// Append to recipe list
+	// 2. Append to recipe list
+	let getRecipeList = document.querySelector('#meal-search-list');
 	newRecipeLI.appendChild(newRecipeImg);
 	newRecipeLI.appendChild(newRecipeContentDiv);
 	newRecipeLI.appendChild(newRecipeBtns);
-
-	return newRecipeLI;
+	getRecipeList.appendChild(newRecipeLI);
 }
 
 function displayRecipeDesc(mins, servings) {
@@ -303,41 +342,67 @@ function displayRecipeBtns(recipeLink) {
 
 	return newDiv;
 }
-
+/**
+ * Async function that request via API the meals that can be cooked from the ingredients(array) provided
+ * @param {Array<string>} ingredients - ingredients list
+ * @returns {Promise} - Promise object representing result of mealSearch
+ */
 async function mealSearch(ingredients) {
+	/** @type {string} - This is the requestURL when searching for recipes by ingredient */
 	let requestUrl = 'https://api.spoonacular.com/recipes/findByIngredients?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
+	/** @type {string} - This is the comma separated list of ingredients for the search query	 */
 	let ingredientReq = `ingredients=${ingredients.join(',')}`;
+	/** @type {string} - Maximum number of results to be returned. The default is 10 to limit request	 */
 	let maxHitsReq = `number=10`;
+	/** @type {string} - Request url considering the search query */
 	let url = `${requestUrl}&${ingredientReq}&${maxHitsReq}`;
-	// 1. Fetch data in API
-	const response = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	// 2. Store data
-	const data = await response.json();
-	mealsSearchList = data;
+	try {
+		// 1. Fetch data in API
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		// 2. Store data
+		const data = await response.json();
+		activeUser.addMealSearchList(data);
+		console.log('3. Request in API the meals that can be cooked\nDone fetching recipe info');
+	} catch (error) {
+		console.log(error);
+	}
 }
-
+/**
+ * Async function that searches for the recipe information
+ * Updates the activeUser.searchlist
+ * @param {Array<string>} recipes - recipe ids for searching recipe
+ */
 async function recipeInfoSearch(recipes) {
 	let requestUrl = 'https://api.spoonacular.com/recipes/informationBulk?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
 	let idsReq = `ids=${recipes.join(',')}`;
 	let url = `${requestUrl}&${idsReq}`;
 	// 1. Fetch data in API
-	const response = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	// 2. Store data
-	const data = await response.json();
-	recipesInfo = data;
+	try {
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		// 2. Store data
+		const data = await response.json();
+		updateRecipeInfo(data);
+		console.log('6. Search recipe information\nDone fetching recipe info');
+		// recipesInfo = data;
+	} catch (error) {
+		console.log(err);
+	}
 }
-
+function updateRecipeInfo(newRecipeInfo) {
+	console.log('Previous array length', recipesInfo.length);
+	recipesInfo = [...recipesInfo, ...newRecipeInfo];
+	console.log('New array length', recipesInfo.length);
+}
 function extractIds(recipesList) {
 	return recipesList.map(({ id }) => id);
 }
