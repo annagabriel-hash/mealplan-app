@@ -299,6 +299,10 @@ select {
 .btn:active {
 	box-shadow: none;
 }
+.btn:disabled {
+	color: darkgrey;
+	cursor: not-allowed;
+}
 /* || MODAL */
 .modal {
 	position: fixed;
