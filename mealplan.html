@@ -16,9 +16,8 @@
 		<nav class="d-none">
 			<ul class="nav-bar">
 				<li class="nav-items active"><span class="material-icons-round"> home </span></li>
-				<li class="nav-items"><span class="material-icons-round"> kitchen </span></li>
 				<li class="nav-items"><span class="material-icons-round"> restaurant </span></li>
-				<!-- <li class="nav-items"><span class="material-icons-round"> local_grocery_store </span></li> -->
+				<li class="nav-items"><span class="material-icons-round"> logout </span></li>
 			</ul>
 		</nav>
 		<main>
@@ -115,50 +114,7 @@
 					</form>
 				</div>
 			</section>
-			<!-- Section 3: Main Page - shows the current meal and fridge contents -->
-			<section class="tab p-1 d-none">
-				<h2>Hi Anna!</h2>
-				<div>
-					<div class="board-top">
-						<h3>My Fridge</h3>
-						<p>See All</p>
-					</div>
-					<ul>
-						<li>Apples</li>
-						<li>Banana</li>
-					</ul>
-				</div>
-				<div class="board-top">
-					<h3>My Meal Plan</h3>
-					<p>See All</p>
-				</div>
-				<ul class="cards meal-list">
-					<li class="card">
-						<img src="https://spoonacular.com/recipeImages/716429-556x370.jpg" alt="" class="card-img" />
-						<div class="pt-1 d-flex">
-							<p class="card-title">Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs</p>
-							<div class="d-flex">
-								<ul class="dot-separator text-sm">
-									<li>45 mins</li>
-									<li>2 servings</li>
-								</ul>
-								<ul class="dot-separator text-sm">
-									<li>Lunch</li>
-									<li>Main course</li>
-									<li>Main dish</li>
-									<li>Dinner</li>
-								</ul>
-								<p class="text-sm"><span>3</span> missing ingredients</p>
-							</div>
-							<div class="btn-grp d-flex f-row">
-								<button type="button" class="btn mr-1">Save</button>
-								<a href="http://" class="btn" target="_blank" rel="noreferrer noopener">View</a>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</section>
-			<!-- Section 4: My Fridge -->
+			<!-- Section 3: My Fridge -->
 			<section class="tab">
 				<div id="fridge-top">
 					<h2 class="pl-1">What's in your fridge?</h2>
@@ -187,12 +143,12 @@
 					<ul class="cards meal-list" id="meal-search-list"></ul>
 				</div>
 			</section>
-			<!-- Section 5: My Meals Plan Page -->
+			<!-- Section 4: My Meals Plan Page -->
 			<section class="tab d-none">
 				<h2>My Meal Plan</h2>
 				<ul class="cards" id="meal-plans"></ul>
 			</section>
-			<!-- Display Recipe -->
+			<!-- Section 5: Display Recipe -->
 			<article class="d-none" id="recipe">
 				<div class="p-xs article-top">
 					<button><span class="material-icons-round"> arrow_back_ios_new </span></button>
