@@ -587,6 +587,7 @@ section:nth-child(1) label {
 /* Section 4: My Meal Plans */
 #mealplan-top {
 	background-image: url(../assets/food.jpg);
+	background-position: bottom;
 }
 #meal-plans {
 	padding-top: 0;
