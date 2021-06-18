@@ -427,7 +427,7 @@ select {
 .mt-xs {
 	margin-top: 1rem;
 }
-.mb-xs {
+.mb-1 {
 	margin-bottom: 1rem;
 }
 .mr-1 {
@@ -574,7 +574,10 @@ article {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0.5em;
+}
+article header {
+	background-image: url(https://spoonacular.com/recipeImages/716429-556x370);
+	width: 100%;
 }
 .article-top {
 	position: relative;
@@ -593,16 +596,17 @@ article h2 {
 	width: 100%;
 	flex-basis: 20vh;
 }
-.article-content {
-	flex-basis: 80vh;
-}
 .article-content > h3 {
 	padding-top: 0.5em;
 	padding-bottom: 0.3em;
 }
+.article-content {
+	/* top | horizontal | bottom */
+	padding: 0 1rem 1rem;
+}
 .article-ing > p {
 	font-weight: 600;
-	padding-top: 0.5em;
+	padding: 0.8em 0 0.5em;
 }
 .article-ing li {
 	list-style-type: disc;
