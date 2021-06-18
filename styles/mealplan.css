@@ -292,6 +292,11 @@ select {
 	vertical-align: middle;
 	box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
 }
+.btn-circle {
+	border-radius: 50%;
+	padding: 0.5rem 0.8rem;
+	min-width: 0;
+}
 .btn:hover,
 .btn:focus {
 	box-shadow: 0 1px 3px rgba(32, 33, 36, 0.28);
@@ -303,6 +308,7 @@ select {
 	color: darkgrey;
 	cursor: not-allowed;
 }
+
 /* || MODAL */
 .modal {
 	position: fixed;
@@ -578,6 +584,12 @@ article {
 article header {
 	background-image: url(https://spoonacular.com/recipeImages/716429-556x370);
 	width: 100%;
+	position: relative;
+}
+article header button {
+	position: absolute;
+	left: 10px;
+	top: 10px;
 }
 .article-top {
 	position: relative;
