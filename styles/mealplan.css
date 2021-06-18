@@ -504,6 +504,9 @@ select {
 	top: 0;
 	z-index: 5;
 	height: 180px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 .sec-top > h2 {
 	color: white;
@@ -530,8 +533,6 @@ section:nth-child(1) label {
 /* Section 3: My Fridge */
 #fridge-top {
 	background-image: url(../assets/ingredients.jpg);
-	background-size: cover;
-	background-position: center;
 	margin-bottom: 40px;
 }
 #fridgeForm {
@@ -576,8 +577,6 @@ section:nth-child(1) label {
 /* Section 4: My Meal Plans */
 #mealplan-top {
 	background-image: url(../assets/food.jpg);
-	background-size: cover;
-	background-position: center;
 	margin-bottom: 40px;
 }
 /* Section 5: Recipe */

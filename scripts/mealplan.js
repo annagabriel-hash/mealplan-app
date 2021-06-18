@@ -81,8 +81,9 @@ const FORM = {
 		let getMealPlan = document.querySelector('#meal-plans');
 		// Onclick
 		getMealSearch.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealSearch, 'save'));
-		getMealSearch.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealSearch, activeUser.mealsSearchList));
+		getMealSearch.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealSearch));
 		getMealPlan.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealPlan, 'delete'));
+		getMealPlan.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealPlan));
 	},
 	formatStrToLower(ev) {
 		let field = ev.target;
@@ -139,7 +140,7 @@ const FORM = {
 			// To prevent being clicked again
 			btn.setAttribute('disabled', 'true');
 		} else {
-			// Delete
+			// Delete from display
 			getMealCard.remove();
 		}
 	},
@@ -157,10 +158,9 @@ const FORM = {
 		// 2. Get index of data as basis to search meal plan
 		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
 
-		const recipe = displayRecipe(mealList[index]);
-		getRecipe.appendChild(recipe);
-
 		// 3. Display recipe
+		let recipe = displayRecipe(mealList[index]);
+		getRecipe.appendChild(recipe);
 	},
 };
 FORM.init();
@@ -190,7 +190,7 @@ class User {
 	}
 	updateMealPlan(action, index) {
 		// Missing values passed
-		if (!action || !index) return;
+		if (action === undefined || index === undefined) return;
 		if (action === 'delete') {
 			this.mealPlans.splice(index, 1);
 		} else {
@@ -473,7 +473,8 @@ function displayRecipeBtns(btnName) {
  * "Delete" - For the meal plan list
  */
 function displaymealSearch(listElem, mealSearch, btnName) {
-	let recipeInfo = recipesInfo.find((recipes) => recipes.id === mealSearch.id);
+	let recipeID = mealSearch.id;
+	let recipeInfo = recipesInfo.find((recipes) => recipes.id === recipeID);
 	// 1. Create elements
 	const newRecipeLI = document.createElement('li');
 	newRecipeLI.className = 'card';
@@ -514,8 +515,9 @@ function displaymealSearch(listElem, mealSearch, btnName) {
 	newRecipeLI.appendChild(newRecipeBtns);
 	listElem.appendChild(newRecipeLI);
 }
-function displayRecipe(mealSearch) {
-	let recipeInfo = recipesInfo.find((recipes) => recipes.id === mealSearch.id);
+function displayRecipe(meal) {
+	let recipeID = meal.id;
+	let recipeInfo = recipesInfo.find((recipes) => recipes.id === recipeID);
 	// 1. Create elements
 	const newArticleContent = document.createElement('div');
 	newArticleContent.className = 'article-content';
@@ -533,7 +535,7 @@ function displayRecipe(mealSearch) {
 	newArticleContent.appendChild(displayDishTypes(recipeInfo.dishTypes));
 
 	// Recipe Ingredients
-	newArticleContent.appendChild(displayIngredients(mealSearch));
+	newArticleContent.appendChild(displayIngredients(meal));
 
 	// Recipe Summary
 	const newRecipeSumm = document.createElement('p');
