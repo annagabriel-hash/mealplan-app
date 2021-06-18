@@ -342,6 +342,110 @@ function displayFridgeLI(ingredient, index = activeUser.fridgeList.length) {
 	getFridgeList.appendChild(newLI);
 }
 /**
+ * Creates a UL and LI element for the recipe description (mins and servings)
+ * to be displayed
+ * @param {string | number} mins - number of minutes to cook the meal
+ * @param {string | number} servings - servings of the meal
+ * @returns {HTMLUListElement} UL element with the dot-separated recipe description
+ */
+function displayRecipeDesc(mins, servings) {
+	let strMins = mins > 1 ? `${mins} mins` : `${mins} min`;
+	let strServings = servings > 1 ? `${servings} servings` : `${servings} serving`;
+	const newUL = document.createElement('ul');
+	newUL.className = 'dot-separator text-sm';
+
+	newUL.appendChild(createLI(strMins));
+	newUL.appendChild(createLI(strServings));
+
+	return newUL;
+}
+/**
+ * Creates a UL and LI element for the dishtypes to be displayed
+ * @param {Array<string>} dishTypes
+ * @returns {HTMLUListElement} UL element with the dot-separated dish types
+ */
+function displayDishTypes(dishTypes) {
+	const newUL = document.createElement('ul');
+	newUL.className = 'dot-separator text-sm';
+
+	dishTypes.forEach((dishtype) => {
+		// Convert to dishtype to proper case
+		let formatdishtype = dishtype[0].toUpperCase() + dishtype.substring(1);
+		// Create HTML list element and append
+		let newLI = createLI(formatdishtype);
+		newUL.appendChild(newLI);
+	});
+	return newUL;
+}
+function displayMissingIngredients(missingIngredientCount) {
+	let formatIngredientCount = missingIngredientCount > 1 ? `${missingIngredientCount} missing ingredients` : `${missingIngredientCount} missing ingredient`;
+	// Create HTML element
+	const newPar = document.createElement('p');
+	newPar.className = 'text-sm';
+	newPar.textContent = formatIngredientCount;
+
+	return newPar;
+}
+
+function displayIngredients(mealSearch) {
+	// 1. Create HTML elements
+	const newDiv = document.createElement('div');
+	newDiv.className = 'article-ing';
+	// Missing ingredients
+	if (mealSearch.missedIngredientCount > 0) {
+		const missedIngTitle = document.createElement('p');
+		missedIngTitle.textContent = 'Missed Ingredients';
+
+		const missedIng = document.createElement('ul');
+		mealSearch.missedIngredients.forEach((ingredient) => {
+			let newLI = createLI(ingredient.original);
+			missedIng.appendChild(newLI);
+		});
+
+		newDiv.appendChild(missedIngTitle);
+		newDiv.appendChild(missedIng);
+	}
+	// Used ingredients
+	if (mealSearch.usedIngredientCount > 0) {
+		const usedIngTitle = document.createElement('p');
+		usedIngTitle.textContent = 'Used Ingredients';
+
+		const usedIng = document.createElement('ul');
+		mealSearch.usedIngredients.forEach((ingredient) => {
+			let newLI = createLI(ingredient.original);
+			usedIng.appendChild(newLI);
+		});
+
+		newDiv.appendChild(usedIngTitle);
+		newDiv.appendChild(usedIng);
+	}
+
+	return newDiv;
+}
+
+function displayRecipeBtns(btnName) {
+	const newDiv = document.createElement('div');
+	newDiv.className = 'btn-grp d-flex f-row';
+
+	const newBtn = document.createElement('button');
+	newBtn.setAttribute('type', 'button');
+
+	newBtn.className = 'btn mr-1';
+	newBtn.textContent = btnName;
+
+	const newLink = document.createElement('a');
+	Object.assign(newLink, {
+		href: '#recipe',
+		className: 'btn',
+		textContent: 'View',
+	});
+	newDiv.appendChild(newBtn);
+	newDiv.appendChild(newLink);
+
+	return newDiv;
+}
+
+/**
  * Function to display meal search in HTML
  * @param {HTMLElement} listElem - ul element to display data.
  * @param {Object} mealSearch - mealSearch API results
@@ -391,61 +495,46 @@ function displaymealSearch(listElem, mealSearch, btnName) {
 	newRecipeLI.appendChild(newRecipeBtns);
 	listElem.appendChild(newRecipeLI);
 }
+function displayRecipe(mealSearch) {
+	let recipeInfo = recipesInfo.find((recipes) => recipes.id === mealSearch.id);
+	// 1. Create elements
+	const newArticleContent = document.createElement('div');
+	newArticleContent.className = 'article-content';
+	// Recipe Image
+	const getArticleImg = document.querySelector('#recipe > header');
+	getArticleImg.style.backgroundImage = `url(${recipeInfo.image})`;
 
-function displayRecipeDesc(mins, servings) {
-	let strMins = mins > 1 ? `${mins} mins` : `${mins} min`;
-	let strServings = servings > 1 ? `${servings} servings` : `${servings} serving`;
-	const newUL = document.createElement('ul');
-	newUL.className = 'dot-separator text-sm';
+	// Recipe Title
+	const newRecipeTitle = document.createElement('h3');
+	newRecipeTitle.textContent = recipeInfo.title;
+	newArticleContent.appendChild(newRecipeTitle);
 
-	newUL.appendChild(createLI(strMins));
-	newUL.appendChild(createLI(strServings));
+	// Recipe Description
+	newArticleContent.appendChild(displayRecipeDesc(recipeInfo.readyInMinutes, recipeInfo.servings));
+	newArticleContent.appendChild(displayDishTypes(recipeInfo.dishTypes));
 
-	return newUL;
-}
-function displayDishTypes(dishTypes) {
-	const newUL = document.createElement('ul');
-	newUL.className = 'dot-separator text-sm';
+	// Recipe Ingredients
+	newArticleContent.appendChild(displayIngredients(mealSearch));
 
-	dishTypes.forEach((dishtype) => {
-		// Convert to dishtype to proper case
-		let formatdishtype = dishtype[0].toUpperCase() + dishtype.substring(1);
-		// Create HTML list element and append
-		newUL.appendChild(createLI(formatdishtype));
-	});
-	return newUL;
-}
-function displayMissingIngredients(missingIngredientCount) {
-	let formatIngredientCount = missingIngredientCount > 1 ? `${missingIngredientCount} missing ingredients` : `${missingIngredientCount} missing ingredient`;
-	// Create HTML element
-	const newPar = document.createElement('p');
-	newPar.className = 'text-sm';
-	newPar.textContent = formatIngredientCount;
+	// Recipe Summary
+	const newRecipeSumm = document.createElement('p');
+	newRecipeSumm.className = 'text-italic pt-1 mb-1';
+	newRecipeSumm.innerHTML = recipeInfo.summary;
+	newArticleContent.appendChild(newRecipeSumm);
 
-	return newPar;
-}
-function displayRecipeBtns(btnName) {
-	const newDiv = document.createElement('div');
-	newDiv.className = 'btn-grp d-flex f-row';
-
-	const newBtn = document.createElement('button');
-	newBtn.setAttribute('type', 'button');
-
-	newBtn.className = 'btn mr-1';
-	newBtn.textContent = btnName;
-
-	const newLink = document.createElement('a');
-	Object.assign(newLink, {
-		href: '#recipe',
+	// Recipe Button
+	const newViewBtn = document.createElement('a');
+	Object.assign(newViewBtn, {
+		href: recipeInfo.sourceUrl,
 		className: 'btn',
-		textContent: 'View',
+		target: '_blank',
+		rel: 'noreferrer noopener',
+		textContent: 'View Instructions',
 	});
-	newDiv.appendChild(newBtn);
-	newDiv.appendChild(newLink);
+	newArticleContent.appendChild(newViewBtn);
 
-	return newDiv;
+	return newArticleContent;
 }
-
 function updateRecipeInfo(newRecipeInfo) {
 	recipesInfo = [...recipesInfo, ...newRecipeInfo];
 	return recipesInfo;
