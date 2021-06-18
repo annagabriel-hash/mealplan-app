@@ -476,7 +476,7 @@ select {
 	transform: translateX(-50%);
 	border-radius: 30px;
 	background-color: white;
-	z-index: 2;
+	z-index: 10;
 	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.16);
 }
 .nav-items {
@@ -500,7 +500,10 @@ select {
 }
 /* Multiple Sections */
 .tab {
-	/* display: none; */
+	display: none;
+}
+.tab.active {
+	display: block;
 }
 .sec-top {
 	position: sticky;
@@ -580,7 +583,9 @@ section:nth-child(1) label {
 /* Section 4: My Meal Plans */
 #mealplan-top {
 	background-image: url(../assets/food.jpg);
-	margin-bottom: 40px;
+}
+#meal-plans {
+	padding-top: 0;
 }
 /* Section 5: Recipe */
 article {

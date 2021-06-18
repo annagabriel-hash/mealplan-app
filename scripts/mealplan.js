@@ -20,6 +20,7 @@ const FORM = {
 	init() {
 		FORM.loginFormListeners();
 		FORM.signUpFormListeners();
+		FORM.navBarListeners();
 		FORM.fridgeFormListeners();
 		FORM.mealFormListeners();
 		FORM.mealPlanListeners();
@@ -30,6 +31,9 @@ const FORM = {
 		let password = form.elements['password'];
 		const getSignUpLink = document.querySelector('#signup-link');
 		const getPrevBtn = document.querySelector('#prevBtn');
+		const getLoginPg = document.querySelector('#sec-login');
+		const getMainPg = document.querySelector('.tab');
+		const getNav = document.querySelector('nav');
 		// While typing
 		username.addEventListener('input', FORM.formatStrToUpper);
 
@@ -42,10 +46,17 @@ const FORM = {
 			// 1. Validate form details
 			let isValid = FORM.validateForm(ev);
 			if (isValid) {
-				// 2. Reset form
+				// 2. Reset form and fields
+				let inputElems = form.querySelectorAll('input');
+				inputElems.forEach((inputElem) => setInputValidationMsg(inputElem, 'reset'));
 				form.reset();
+				currentTab = 0;
 				// 3. Hide login
-				document.querySelector('#sec-login').classList.add('d-none');
+				getLoginPg.classList.add('d-none');
+				// 4. Display navigation
+				getMainPg.classList.add('active');
+				// 5. Display main pages
+				getNav.classList.remove('d-none');
 			}
 		});
 
@@ -86,7 +97,7 @@ const FORM = {
 		getPrevBtn.addEventListener('click', (ev) => {
 			getNewUsrTabs[currentTab].classList.add('d-none');
 			currentTab--;
-			FORM.showTab(currentTab);
+			FORM.showFormFieldset(currentTab);
 		});
 		getNextBtn.addEventListener('click', (ev) => {
 			// Validate data
@@ -102,7 +113,7 @@ const FORM = {
 			if (isFieldValid) {
 				getNewUsrTabs[currentTab].classList.add('d-none');
 				currentTab++;
-				FORM.showTab(currentTab);
+				FORM.showFormFieldset(currentTab);
 			}
 		});
 		// When the form gets submitted
@@ -119,6 +130,20 @@ const FORM = {
 				const getSignUpPage = document.querySelector('#sec-newusr');
 				getSignUpPage.classList.add('d-none');
 			}
+		});
+	},
+	navBarListeners() {
+		const navItems = document.querySelectorAll('.nav-items');
+
+		navItems.forEach((clickedNav) => {
+			clickedNav.addEventListener('click', () => {
+				// 1. Reset navItems
+				navItems.forEach((navItem) => navItem.classList.remove('active'));
+				// 2. Display clicked tab
+				clickedNav.classList.add('active');
+				currentTab = [].indexOf.call(navItems, clickedNav);
+				FORM.showTab(currentTab);
+			});
 		});
 	},
 	fridgeFormListeners() {
@@ -195,7 +220,7 @@ const FORM = {
 		let field = ev.target;
 		field.value = field.value.toUpperCase().trim();
 	},
-	showTab(n) {
+	showFormFieldset(n) {
 		const getPrevBtn = document.querySelector('#prevBtn');
 		const getNextBtn = document.querySelector('#nextBtn');
 		const getNewUsrTabs = document.querySelectorAll('#newUserForm > fieldset');
@@ -206,11 +231,44 @@ const FORM = {
 			getPrevBtn.style.visibility = 'hidden';
 			getNextBtn.classList.remove('d-none');
 		} else {
-			// Middle page
+			// End page
 			getPrevBtn.style.visibility = 'visible';
 			getNextBtn.classList.add('d-none');
 			getSignUpBtn.classList.remove('d-none');
 		}
+	},
+	showTab(n) {
+		let getTabs = document.querySelectorAll('.tab');
+		// 1. Hide all tabs
+		getTabs.forEach((tab) => tab.classList.remove('active'));
+		// 2. Show clicked tab
+		n === 1 && FORM.displayMealPlans();
+		if (n === 2) {
+			FORM.logout();
+			return;
+		}
+		getTabs[n].classList.add('active');
+	},
+	displayMealPlans() {
+		const getMealPlans = document.querySelector('#meal-plans');
+
+		// 1. Reset meal plans
+		deleteChildNodes(getMealPlans);
+		// 2. Display meal plans
+		activeUser.mealPlans.forEach((mealPlan) => displaymealSearch(getMealPlans, mealPlan, 'Delete'));
+	},
+	logout() {
+		const navItems = document.querySelectorAll('.nav-items');
+		// 1. Reset tab
+		currentTab = 0;
+		// 2. Reset navbar
+		// 2.1 Hide navbar
+		document.querySelector('nav').classList.add('d-none');
+		// 2.2 Set home page as active (default)
+		navItems.forEach((navItem) => navItem.classList.remove('active'));
+		document.querySelector('.nav-bar').firstElementChild.classList.add('active');
+		// 3. Display login page
+		document.querySelector('#sec-login').classList.remove('d-none');
 	},
 	testFridgeInput(ev) {
 		let field = ev.target;
@@ -423,7 +481,6 @@ class User {
  * For example, <input name="firstname" value="anna"> will return object.firstname = 'anna';
  * @param {HTMLElement} formElem - form element
  * @returns {{inputname: inputvalue}} - returns form with the input name as object key and input value the object value
- *
  */
 function storeFormData(formElem) {
 	let formData = {};
@@ -669,13 +726,13 @@ function displayRecipeBtns(btnName) {
 
 /**
  * Function to display meal search in HTML
- * @param {HTMLElement} listElem - ul element to display data.
+ * @param {HTMLElement} ulElem - ul element to display data.
  * @param {Object} mealSearch - mealSearch API results
  * @param {string} btnName - button name ('Save'/'Delete')
  * "Save" - For the meal search (to save in the meal plan)
  * "Delete" - For the meal plan list
  */
-function displaymealSearch(listElem, mealSearch, btnName) {
+function displaymealSearch(ulElem, mealSearch, btnName) {
 	let recipeID = mealSearch.id;
 	let recipeInfo = recipesInfo.find((recipes) => recipes.id === recipeID);
 	// 1. Create elements
@@ -716,7 +773,7 @@ function displaymealSearch(listElem, mealSearch, btnName) {
 	newRecipeLI.appendChild(newRecipeImg);
 	newRecipeLI.appendChild(newRecipeContentDiv);
 	newRecipeLI.appendChild(newRecipeBtns);
-	listElem.appendChild(newRecipeLI);
+	ulElem.appendChild(newRecipeLI);
 }
 function displayRecipe(meal) {
 	let recipeID = meal.id;
