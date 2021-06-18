@@ -133,11 +133,22 @@ const FORM = {
 		});
 	},
 	navBarListeners() {
-		const navBar = document.querySelector('nav');
+		const navBar = document.querySelector('.nav-bar');
 		const navItems = document.querySelectorAll('.nav-items');
 
 		// Upon scrolling
-
+		let prevScrollpos = window.pageYOffset;
+		window.onscroll = function () {
+			let currentScrollpos = window.pageYOffset;
+			// Scroll down
+			if (prevScrollpos > currentScrollpos) {
+				navBar.classList.add('active');
+			} else {
+				// Scroll up
+				navBar.classList.remove('active');
+			}
+			prevScrollpos = currentScrollpos;
+		};
 		// Upon clicking of nav items
 		navItems.forEach((clickedNav) => {
 			clickedNav.addEventListener('click', () => {
