@@ -470,7 +470,7 @@ select {
 	justify-content: space-around;
 	padding: 0.8rem 0;
 	position: fixed;
-	bottom: 12px;
+	bottom: -70px;
 	/* Center navbar */
 	left: 50%;
 	transform: translateX(-50%);
@@ -478,6 +478,10 @@ select {
 	background-color: white;
 	z-index: 10;
 	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.16);
+	transition: bottom 0.3s linear;
+}
+.nav-bar.active {
+	bottom: 12px;
 }
 .nav-items {
 	cursor: pointer;

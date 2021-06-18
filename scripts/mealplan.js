@@ -33,7 +33,7 @@ const FORM = {
 		const getPrevBtn = document.querySelector('#prevBtn');
 		const getLoginPg = document.querySelector('#sec-login');
 		const getMainPg = document.querySelector('.tab');
-		const getNav = document.querySelector('nav');
+		const getNav = document.querySelector('.nav-bar');
 		// While typing
 		username.addEventListener('input', FORM.formatStrToUpper);
 
@@ -56,7 +56,7 @@ const FORM = {
 				// 4. Display navigation
 				getMainPg.classList.add('active');
 				// 5. Display main pages
-				getNav.classList.remove('d-none');
+				getNav.classList.add('active');
 			}
 		});
 
@@ -133,8 +133,12 @@ const FORM = {
 		});
 	},
 	navBarListeners() {
+		const navBar = document.querySelector('nav');
 		const navItems = document.querySelectorAll('.nav-items');
 
+		// Upon scrolling
+
+		// Upon clicking of nav items
 		navItems.forEach((clickedNav) => {
 			clickedNav.addEventListener('click', () => {
 				// 1. Reset navItems
@@ -251,7 +255,6 @@ const FORM = {
 	},
 	displayMealPlans() {
 		const getMealPlans = document.querySelector('#meal-plans');
-
 		// 1. Reset meal plans
 		deleteChildNodes(getMealPlans);
 		// 2. Display meal plans
@@ -263,7 +266,7 @@ const FORM = {
 		currentTab = 0;
 		// 2. Reset navbar
 		// 2.1 Hide navbar
-		document.querySelector('nav').classList.add('d-none');
+		document.querySelector('.nav-bar').classList.remove('active');
 		// 2.2 Set home page as active (default)
 		navItems.forEach((navItem) => navItem.classList.remove('active'));
 		document.querySelector('.nav-bar').firstElementChild.classList.add('active');
