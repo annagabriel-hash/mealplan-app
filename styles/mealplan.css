@@ -499,6 +499,9 @@ select {
 	color: rgb(255, 132, 39);
 }
 /* Multiple Sections */
+.tab {
+	/* display: none; */
+}
 .sec-top {
 	position: sticky;
 	top: 0;

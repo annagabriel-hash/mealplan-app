@@ -14,12 +14,112 @@ let activeUser; // loggedIn user object
 const users = []; // To store list of users
 let recipesInfo = []; // To store recipes instead of requesting the recipe information via API
 let mealsSearchList = {}; // results for the meal
+let currentTab = 0; // To set what tabs to view in the Sign up page
 
 const FORM = {
 	init() {
+		FORM.loginFormListeners();
+		FORM.signUpFormListeners();
 		FORM.fridgeFormListeners();
 		FORM.mealFormListeners();
 		FORM.mealPlanListeners();
+	},
+	loginFormListeners() {
+		let form = document.forms['loginForm'];
+		let username = form.elements['username'];
+		let password = form.elements['password'];
+		const getSignUpLink = document.querySelector('#signup-link');
+		const getPrevBtn = document.querySelector('#prevBtn');
+		// While typing
+		username.addEventListener('input', FORM.formatStrToUpper);
+
+		// When there is an error during validation
+		username.addEventListener('invalid', FORM.fail);
+		password.addEventListener('invalid', FORM.fail);
+
+		// When the form gets submitted
+		form.addEventListener('submit', (ev) => {
+			// 1. Validate form details
+			let isValid = FORM.validateForm(ev);
+			if (isValid) {
+				// 2. Reset form
+				form.reset();
+				// 3. Hide login
+				document.querySelector('#sec-login').classList.add('d-none');
+			}
+		});
+
+		// FOR NEW USERS
+		// Upon clicking of sign-up link
+		getSignUpLink.addEventListener('click', () => {
+			// 1. Show sign up page
+			let getSignUpPage = document.querySelector('#sec-newusr');
+			getSignUpPage.classList.remove('d-none');
+			getPrevBtn.style.visibility = 'hidden';
+		});
+	},
+	signUpFormListeners() {
+		const getPrevBtn = document.querySelector('#prevBtn');
+		const getNextBtn = document.querySelector('#nextBtn');
+		const getNewUsrTabs = document.querySelectorAll('#newUserForm > fieldset');
+		let form = document.forms['newUserForm'];
+		let inputElems = form.querySelectorAll('input');
+		let firstname = form.elements['firstName'];
+		let lastname = form.elements['lastName'];
+		let newUsername = form.elements['username'];
+		let chkpassword = form.elements['chkpassword'];
+
+		// After changing whole value
+		firstname.addEventListener('change', FORM.formatStrToUpper);
+		lastname.addEventListener('change', FORM.formatStrToUpper);
+		inputElems.forEach((inputElem) => inputElem.addEventListener('change', FORM.validateInputs(inputElem)));
+		newUsername.addEventListener('change', (ev) => {
+			FORM.formatStrToUpper(ev);
+			FORM.testNewUser(ev);
+		});
+		chkpassword.addEventListener('change', FORM.testNewPassword);
+
+		// When there is an error during validation
+		inputElems.forEach((inputElem) => inputElem.addEventListener('invalid', FORM.fail));
+
+		// || Section 2: New User
+		getPrevBtn.addEventListener('click', (ev) => {
+			getNewUsrTabs[currentTab].classList.add('d-none');
+			currentTab--;
+			FORM.showTab(currentTab);
+		});
+		getNextBtn.addEventListener('click', (ev) => {
+			// Validate data
+			let currentInputs = getNewUsrTabs[currentTab].querySelectorAll('input');
+			let isFieldValid;
+			currentInputs.forEach((element) => {
+				FORM.validateInputs(element);
+				isFieldValid = element.checkValidity();
+				if (!isFieldValid) {
+					return;
+				}
+			});
+			if (isFieldValid) {
+				getNewUsrTabs[currentTab].classList.add('d-none');
+				currentTab++;
+				FORM.showTab(currentTab);
+			}
+		});
+		// When the form gets submitted
+		form.addEventListener('submit', (ev) => {
+			// 1. Validate form details
+			let isValid = FORM.validateForm(ev);
+			// Form elements are valid
+			if (isValid) {
+				// 1. Create new user
+				FORM.createNewUser(ev);
+				// 2. Reset form
+				form.reset();
+				// 3. Hide Sign up Page
+				const getSignUpPage = document.querySelector('#sec-newusr');
+				getSignUpPage.classList.add('d-none');
+			}
+		});
 	},
 	fridgeFormListeners() {
 		let form = document.forms['fridgeForm'];
@@ -91,6 +191,27 @@ const FORM = {
 		let field = ev.target;
 		field.value = field.value.toLowerCase().trim();
 	},
+	formatStrToUpper(ev) {
+		let field = ev.target;
+		field.value = field.value.toUpperCase().trim();
+	},
+	showTab(n) {
+		const getPrevBtn = document.querySelector('#prevBtn');
+		const getNextBtn = document.querySelector('#nextBtn');
+		const getNewUsrTabs = document.querySelectorAll('#newUserForm > fieldset');
+		const getSignUpBtn = document.querySelector('#btn-signup');
+		getNewUsrTabs[n].classList.remove('d-none');
+		// Starting page
+		if (n === 0) {
+			getPrevBtn.style.visibility = 'hidden';
+			getNextBtn.classList.remove('d-none');
+		} else {
+			// Middle page
+			getPrevBtn.style.visibility = 'visible';
+			getNextBtn.classList.add('d-none');
+			getSignUpBtn.classList.remove('d-none');
+		}
+	},
 	testFridgeInput(ev) {
 		let field = ev.target;
 		fridgeItem = field.value;
@@ -98,6 +219,57 @@ const FORM = {
 		field.setCustomValidity('');
 		// Fridge Item already existing
 		activeUser.fridgeList.includes(fridgeItem) && field.setCustomValidity('Fridge ingredient already exist. Please input another ingredient');
+	},
+	testLogin(ev) {
+		let username = this.elements['username'];
+		let password = this.elements['password'];
+		// 1. Reset custom errors
+		username.setCustomValidity('');
+		password.setCustomValidity('');
+		// 2. Check validity checks the element's value against the constraints (HTML rules)
+		let isUsrValid = username.checkValidity();
+		let isPwdValid = password.checkValidity();
+		if (isUsrValid && isPwdValid) {
+			try {
+				// Find existing user in the user list
+				let loginUsr = maintainUser(username.value, 'search');
+				// User is not existing
+				if (!loginUsr) throw 'Incorrect username or password';
+				// Password is incorrect
+				if (loginUsr.password !== password.value) throw 'Incorrect username or password';
+				// User and password is correct
+				// Store user information
+				activeUser = maintainUser(username.value, 'search');
+			} catch (err) {
+				username.setCustomValidity(err);
+				password.setCustomValidity(err);
+			}
+		}
+	},
+	testNewPassword(ev) {
+		let field = ev.target;
+		let password = document.forms['newUserForm'].elements['password'];
+		// 1. Reset errors
+		field.setCustomValidity('');
+		password.setCustomValidity('');
+		// 2. Check if re-entered password matches
+		if (field.value !== password.value) {
+			// Re-entered password does not match
+			field.setCustomValidity('Password does not match');
+			password.setCustomValidity('Password does not match');
+		}
+		// To immediately validate fields
+		FORM.validateInputs(password);
+		FORM.validateInputs(field);
+	},
+	testNewUser(ev) {
+		let field = ev.target;
+		let username = maintainUser(field.value, 'search');
+		field.setCustomValidity('');
+		// New Username is existing
+		username && field.setCustomValidity('Username already exist. Please input other username.');
+		// To immediately show the error
+		FORM.validateInputs(field);
 	},
 	fail(ev) {
 		let field = ev.target;
@@ -124,6 +296,9 @@ const FORM = {
 		let form = ev.target;
 		let inputElems = form.querySelectorAll('input');
 		ev.preventDefault();
+		// 1. [loginForm] Check if username and password are valid
+		// Binds the function such that when running func testLogin, this refers to the loginForm
+		form.id === 'loginForm' && FORM.testLogin.bind(form)();
 		// 2. Validate input elements and show message
 		inputElems.forEach((inputElem) => FORM.validateInputs(inputElem));
 		return form.checkValidity();
@@ -163,6 +338,13 @@ const FORM = {
 		// 3. Display recipe
 		let recipe = displayRecipe(mealList[index]);
 		getRecipe.appendChild(recipe);
+	},
+	createNewUser(ev) {
+		let form = ev.target;
+		// 1. Store form values to object
+		let formData = storeFormData(form);
+		// 2. Create new user
+		maintainUser(formData, 'create');
 	},
 };
 FORM.init();
