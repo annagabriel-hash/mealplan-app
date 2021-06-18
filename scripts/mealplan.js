@@ -134,8 +134,14 @@ const FORM = {
 		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
 		// 2. Update meal plan
 		activeUser.updateMealPlan(action, index);
-		// 3. Disable btn to prevent being clicked again
-		btn.setAttribute('disabled', 'true');
+		// 3. For save function, disable button; for delete function, remove meal from HTML
+		if (action === 'save') {
+			// To prevent being clicked again
+			btn.setAttribute('disabled', 'true');
+		} else {
+			// Delete
+			getMealCard.remove();
+		}
 	},
 };
 FORM.init();
@@ -168,15 +174,16 @@ class User {
 		if (!action || !index) return;
 		if (action === 'delete') {
 			this.mealPlans.splice(index, 1);
-			console.log('user meal plan updated');
 		} else {
 			// Save action
 			let savedMealPlan = this.mealsSearchList[index];
-			let id = savedMealPlan.id;
-			// Check if meal plan is already existing
-			if (this.mealPlans.includes(savedMealPlan.id)) return;
+			// Check if meal plan was previously saved
+			if (savedMealPlan.isSaved) return;
+			// Add indication that meals have been saved
+			this.mealsSearchList[index].isSaved = true;
 			this.mealPlans.push(savedMealPlan);
 		}
+		// Update local storage
 	}
 	addFridgeList(item) {
 		this.fridgeList.push(item);
@@ -373,7 +380,11 @@ function displaymealSearch(listElem, mealSearch, btnName) {
 
 	// Recipe Buttons
 	const newRecipeBtns = displayRecipeBtns(btnName);
-
+	const btn = newRecipeBtns.querySelector('button');
+	// Disable save btn if previously saved
+	if (btnName === 'Save' && mealSearch.isSaved === true) {
+		btn.setAttribute('disabled', 'true');
+	}
 	// 2. Append to recipe list
 	newRecipeLI.appendChild(newRecipeImg);
 	newRecipeLI.appendChild(newRecipeContentDiv);
@@ -419,6 +430,7 @@ function displayRecipeBtns(btnName) {
 
 	const newBtn = document.createElement('button');
 	newBtn.setAttribute('type', 'button');
+
 	newBtn.className = 'btn mr-1';
 	newBtn.textContent = btnName;
 
