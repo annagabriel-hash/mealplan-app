@@ -508,7 +508,9 @@ section:nth-child(1) label {
 /* Section 4: My Fridge */
 
 #fridge-top {
-	position: relative;
+	position: sticky;
+	top: 0;
+	z-index: 5;
 	height: 180px;
 	background-image: url(https://images.unsplash.com/photo-1563865436874-9aef32095fad?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80);
 	background-image: url(../assets/ingredients2.jpg);
