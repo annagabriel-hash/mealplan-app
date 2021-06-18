@@ -40,9 +40,6 @@ body {
 	overflow: auto;
 	height: auto;
 }
-main {
-	overflow: auto;
-}
 section {
 	min-height: 100vh;
 }
