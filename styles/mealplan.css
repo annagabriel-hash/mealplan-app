@@ -381,6 +381,9 @@ select {
 }
 .dot-separator > li {
 	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .dot-separator > li::after {
 	content: '\2022';
