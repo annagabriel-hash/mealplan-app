@@ -58,18 +58,20 @@ const FORM = {
 			/** @type {Array<string>} - ingredients as search query for the recipes */
 			let ingredients = Array.prototype.map.call(getCheckedIngred, ({ value }) => value);
 			// 3. Request in API the meals that can be cooked
-			await mealSearch(ingredients);
+			await searchMeals(ingredients);
 			// 4. Extract mealSearch Ids
 			let recipeSearchIds = activeUser.mealsSearchList.map(({ id }) => id);
 			console.log('recipeSearchIds', recipeSearchIds);
-			// 5. Check which are not in the cache
+			// 5. Check which are not in the recipe cache
 			let recipeCacheIds = extractIds(recipesInfo);
 			recipeSearchIds = recipeSearchIds.filter((id) => !recipeCacheIds.includes(id));
 			console.log('recipeSearchIds', recipeSearchIds);
-			// 6. Search recipe information
+			// 6. Search recipe information (not in cache)
 			if (recipeSearchIds.length !== 0) {
-				await recipeInfoSearch(recipeSearchIds);
+				await searchRecipeInfo(recipeSearchIds);
 			}
+			// 7. Reset previous meal result
+			deleteChildNodes(getMealSearch);
 			// 7. Display recipe information
 			activeUser.mealsSearchList.forEach((mealResult) => {
 				displaymealSearch(getMealSearch, mealResult, 'Save');
@@ -212,7 +214,21 @@ class User {
 	 * @param {Object} mealSearchResult - result from JSON
 	 */
 	addMealSearchList(mealSearchResult) {
-		this.mealsSearchList = mealSearchResult;
+		let mealPlanIds = activeUser.mealPlans.map(({ id }) => id);
+
+		// 1. Check if meal searches which are existing in the meal plan
+		let newMealSearchList = mealSearchResult.map((meal) => {
+			let index = mealPlanIds.indexOf(meal.id);
+			if (index !== -1) {
+				// 2.1. Add property to indicate whether the meal plan was previously saved
+				meal.isSaved = true;
+				// Update meal plan
+				this.mealPlans[index] = meal;
+			}
+			return meal;
+		});
+		// 1. Update meal search list
+		this.mealsSearchList = newMealSearchList;
 	}
 }
 
@@ -281,7 +297,7 @@ function maintainUser(userInfo, action = 'search') {
  * @param {Array<string>} ingredients - ingredients list
  * @returns {Promise} - Promise object representing result of meal search
  */
-async function mealSearch(ingredients) {
+async function searchMeals(ingredients) {
 	/** @type {string} - This is the requestURL when searching for recipes by ingredient */
 	let requestUrl = 'https://api.spoonacular.com/recipes/findByIngredients?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
 	/** @type {string} - This is the comma separated list of ingredients for the search query	 */
@@ -312,7 +328,7 @@ async function mealSearch(ingredients) {
  * @param {Array<string>} recipes - recipe ids for searching recipe
  * @returns {Promise}  - Promise object representing result of recipe search
  */
-async function recipeInfoSearch(recipes) {
+async function searchRecipeInfo(recipes) {
 	let requestUrl = 'https://api.spoonacular.com/recipes/informationBulk?apiKey=0855fbcbcef446e3adcc091dd8a16aff';
 	let idsReq = `ids=${recipes.join(',')}`;
 	let url = `${requestUrl}&${idsReq}`;
@@ -335,6 +351,11 @@ function createLI(content) {
 	const newLI = document.createElement('li');
 	newLI.textContent = content;
 	return newLI;
+}
+function deleteChildNodes(parent) {
+	while (parent.firstChild) {
+		parent.removeChild(parent.firstChild);
+	}
 }
 function displayFridgeLI(ingredient, index = activeUser.fridgeList.length) {
 	const getFridgeList = document.querySelector('#list-fridge');
