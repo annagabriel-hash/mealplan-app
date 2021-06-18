@@ -10,7 +10,7 @@
     A. VARIABLES
   ====================== 
 */
-let activeUser; // loggedIn user object
+let activeUser;
 const users = []; // To store list of users
 let recipesInfo = []; // To store recipes instead of requesting the recipe information via API
 let mealsSearchList = {}; // results for the meal
@@ -189,7 +189,7 @@ const FORM = {
 	},
 	mealFormListeners() {
 		let form = document.forms['mealForm'];
-		let getMealSearch = document.querySelector('#meal-search-list');
+		const getMealSearch = document.querySelector('#meal-search-list');
 		// When the form gets submitted
 		form.addEventListener('submit', async (ev) => {
 			ev.preventDefault();
@@ -213,9 +213,13 @@ const FORM = {
 			// 7. Reset previous meal result
 			deleteChildNodes(getMealSearch);
 			// 7. Display recipe information
+			getMealSearch.parentElement.classList.remove('d-none');
 			activeUser.mealsSearchList.forEach((mealResult) => {
 				displaymealSearch(getMealSearch, mealResult, 'Save');
 			});
+			// Scroll results into view
+			getMealSearch.parentElement.scrollIntoView();
+			window.scrollTo(0, window.pageYOffset - 190);
 		});
 	},
 	mealPlanListeners() {
