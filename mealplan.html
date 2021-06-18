@@ -116,7 +116,7 @@
 			</section>
 			<!-- Section 3: My Fridge -->
 			<section class="tab">
-				<div id="fridge-top">
+				<div class="sec-top" id="fridge-top">
 					<h2 class="pl-1">What's in your fridge?</h2>
 					<!-- Update Fridge List -->
 					<form action="#" method="POST" id="fridgeForm">
@@ -137,6 +137,7 @@
 						<button type="submit" class="btn">Check Meals</button>
 					</form>
 				</div>
+				<!-- Meal Search Results -->
 				<div class="p-1">
 					<h3>What do you want to cook?</h3>
 					<p>Below are the recipes you can cook. Choose the meals you want to cook</p>
@@ -144,9 +145,11 @@
 				</div>
 			</section>
 			<!-- Section 4: My Meals Plan Page -->
-			<section class="tab d-none">
-				<h2>My Meal Plan</h2>
-				<ul class="cards" id="meal-plans"></ul>
+			<section class="tab">
+				<div class="sec-top" id="mealplan-top">
+					<h2 class="pl-1">My Meal Plans</h2>
+				</div>
+				<ul class="cards meal-list p-1" id="meal-plans"></ul>
 			</section>
 			<!-- Section 5: Display Recipe -->
 			<article class="d-none" id="recipe">

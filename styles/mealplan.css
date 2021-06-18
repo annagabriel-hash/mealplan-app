@@ -24,7 +24,6 @@
   ====================== 
 */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto:wght@300;400;500;700;900&display=swap');
-
 * {
 	box-sizing: border-box;
 	color: #1e212b;
@@ -38,6 +37,10 @@ main {
 }
 body {
 	position: relative;
+	overflow: auto;
+	height: auto;
+}
+main {
 	overflow: auto;
 }
 section {
@@ -90,7 +93,7 @@ button,
 .text-sm {
 	font-size: small;
 }
-.text-xl {
+.text-l {
 	font-size: x-large;
 }
 .text-md {
@@ -360,7 +363,7 @@ select {
 	/* box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px; */
 	border-radius: 8px;
 	/* top | right | bottom | left */
-	margin: 0.5rem 1.2rem 0.5rem 0;
+	margin: 0.5rem 2rem 0.5rem 0;
 	width: 100%;
 	flex-basis: 250px;
 	flex-grow: 1;
@@ -379,11 +382,13 @@ select {
 	display: flex;
 	flex-direction: column;
 }
-.dot-separator > li {
-	display: inline-block;
+.dot-separator {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+.dot-separator > li {
+	display: inline-block;
 }
 .dot-separator > li::after {
 	content: '\2022';
@@ -487,7 +492,18 @@ select {
 .nav-items.active > .material-icons-round {
 	color: rgb(255, 132, 39);
 }
-
+/* Multiple Sections */
+.sec-top {
+	position: sticky;
+	top: 0;
+	z-index: 5;
+	height: 180px;
+}
+.sec-top > h2 {
+	color: white;
+	padding-top: 70px;
+	text-shadow: 0px 9px 10px black, 15px 0px 10px black;
+}
 /* Section 1: Login Page */
 .card-login {
 	padding-left: 1.618rem;
@@ -505,23 +521,12 @@ section:nth-child(1) label {
 	color: rgb(255, 132, 39);
 	cursor: pointer;
 }
-/* Section 4: My Fridge */
-
+/* Section 3: My Fridge */
 #fridge-top {
-	position: sticky;
-	top: 0;
-	z-index: 5;
-	height: 180px;
-	background-image: url(https://images.unsplash.com/photo-1563865436874-9aef32095fad?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80);
-	background-image: url(../assets/ingredients2.jpg);
+	background-image: url(../assets/ingredients.jpg);
 	background-size: cover;
 	background-position: center;
 	margin-bottom: 40px;
-}
-#fridge-top > h2 {
-	color: white;
-	padding-top: 92px;
-	text-shadow: 0px 9px 4px black;
 }
 #fridgeForm {
 	position: absolute;
@@ -558,6 +563,13 @@ section:nth-child(1) label {
 }
 .meal-list .btn {
 	min-width: 0;
+}
+/* Section 4: My Meal Plans */
+#mealplan-top {
+	background-image: url(../assets/food.jpg);
+	background-size: cover;
+	background-position: center;
+	margin-bottom: 40px;
 }
 /* Section 5: Recipe */
 article {
