@@ -223,13 +223,24 @@ const FORM = {
 		});
 	},
 	mealPlanListeners() {
-		let getMealSearch = document.querySelector('#meal-search-list');
-		let getMealPlan = document.querySelector('#meal-plans');
+		const getMealSearch = document.querySelector('#meal-search-list');
+		const getMealPlan = document.querySelector('#meal-plans');
+		const getRecipeBackBtn = document.querySelector('#recipe .btn');
+
 		// Onclick
 		getMealSearch.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealSearch, 'save'));
 		getMealSearch.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealSearch));
 		getMealPlan.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealPlan, 'delete'));
 		getMealPlan.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealPlan));
+		getRecipeBackBtn.addEventListener('click', () => {
+			// Show nav bar
+			document.querySelector('nav').classList.remove('d-none');
+			// Hide recipe tab
+			let recipeTab = document.querySelector('#recipe');
+			recipeTab.classList.add('d-none');
+			// View previous tab
+			document.querySelectorAll('.tab')[currentTab].classList.add('active');
+		});
 	},
 	formatStrToLower(ev) {
 		let field = ev.target;
@@ -411,9 +422,16 @@ const FORM = {
 		// 2. Get index of data as basis to search meal plan
 		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
 
-		// 3. Display recipe
+		// 3. Display recipe content
 		let recipe = displayRecipe(mealList[index]);
 		getRecipe.appendChild(recipe);
+
+		// 4. Show recipe content into view
+		// Hide current tab
+		document.querySelectorAll('.tab')[currentTab].classList.remove('active');
+		// Hide navbar
+		document.querySelector('nav').classList.add('d-none');
+		document.querySelector('#recipe').classList.remove('d-none');
 	},
 	createNewUser(ev) {
 		let form = ev.target;
