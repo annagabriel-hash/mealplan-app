@@ -79,8 +79,9 @@ const FORM = {
 	mealPlanListeners() {
 		let getMealSearch = document.querySelector('#meal-search-list');
 		let getMealPlan = document.querySelector('#meal-plans');
-		// Onclick of the save button
+		// Onclick
 		getMealSearch.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealSearch, 'save'));
+		getMealSearch.addEventListener('click', (ev) => FORM.viewRecipe(ev, getMealSearch, activeUser.mealsSearchList));
 		getMealPlan.addEventListener('click', (ev) => FORM.updateMealPlan(ev, getMealPlan, 'delete'));
 	},
 	formatStrToLower(ev) {
@@ -126,7 +127,6 @@ const FORM = {
 	},
 	updateMealPlan(ev, ulElem, action) {
 		let btn = ev.target;
-		console.log('btn clicked');
 		if (btn.nodeName !== 'BUTTON') return;
 		const getMealList = ulElem.children;
 		const getMealCard = btn.parentElement.parentElement;
@@ -142,6 +142,25 @@ const FORM = {
 			// Delete
 			getMealCard.remove();
 		}
+	},
+	viewRecipe(ev, ulElem) {
+		let btn = ev.target;
+		if (btn.nodeName !== 'A') return;
+		const getRecipe = document.querySelector('#recipe');
+		const getMealList = ulElem.children;
+		const getMealCard = btn.parentElement.parentElement;
+		let mealList = ulElem.id === 'meal-search-list' ? activeUser.mealsSearchList : activeUser.mealPlans;
+		// 1. Remove previous article content to reset
+		let getArticleContent = document.querySelector('.article-content');
+		getArticleContent && getArticleContent.remove();
+
+		// 2. Get index of data as basis to search meal plan
+		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
+
+		const recipe = displayRecipe(mealList[index]);
+		getRecipe.appendChild(recipe);
+
+		// 3. Display recipe
 	},
 };
 FORM.init();
@@ -352,7 +371,7 @@ function displayRecipeDesc(mins, servings) {
 	let strMins = mins > 1 ? `${mins} mins` : `${mins} min`;
 	let strServings = servings > 1 ? `${servings} servings` : `${servings} serving`;
 	const newUL = document.createElement('ul');
-	newUL.className = 'dot-separator text-sm';
+	newUL.className = 'dot-separator';
 
 	newUL.appendChild(createLI(strMins));
 	newUL.appendChild(createLI(strServings));
@@ -366,7 +385,7 @@ function displayRecipeDesc(mins, servings) {
  */
 function displayDishTypes(dishTypes) {
 	const newUL = document.createElement('ul');
-	newUL.className = 'dot-separator text-sm';
+	newUL.className = 'dot-separator';
 
 	dishTypes.forEach((dishtype) => {
 		// Convert to dishtype to proper case
