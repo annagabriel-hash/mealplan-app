@@ -563,6 +563,9 @@ section:nth-child(1) label {
 .meal-list {
 	margin: 20px 0;
 }
+.meal-list ul {
+	font-size: small;
+}
 .meal-list .btn-grp {
 	margin-bottom: 0;
 	align-self: center;
