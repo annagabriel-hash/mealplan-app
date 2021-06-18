@@ -34,6 +34,7 @@ const FORM = {
 		const getLoginPg = document.querySelector('#sec-login');
 		const getMainPg = document.querySelector('.tab');
 		const getNav = document.querySelector('.nav-bar');
+		const getNotif = document.querySelector('.alert');
 		// While typing
 		username.addEventListener('input', FORM.formatStrToUpper);
 
@@ -57,8 +58,12 @@ const FORM = {
 				getMainPg.classList.add('active');
 				// 5. Display main pages
 				getNav.classList.add('active');
+				showNotif('Login successful', 'success');
 			}
 		});
+
+		// On click
+		getNotif.addEventListener('click', (ev) => (getNotif.className = 'alert'));
 
 		// FOR NEW USERS
 		// Upon clicking of sign-up link
@@ -129,6 +134,7 @@ const FORM = {
 				// 3. Hide Sign up Page
 				const getSignUpPage = document.querySelector('#sec-newusr');
 				getSignUpPage.classList.add('d-none');
+				showNotif('User created', 'success');
 			}
 		});
 	},
@@ -275,6 +281,7 @@ const FORM = {
 		n === 1 && FORM.displayMealPlans();
 		if (n === 2) {
 			FORM.logout();
+			showNotif('User logged out', 'success');
 			return;
 		}
 		getTabs[n].classList.add('active');
@@ -399,6 +406,7 @@ const FORM = {
 		let index = Array.prototype.indexOf.call(getMealList, getMealCard);
 		// 2. Update meal plan
 		activeUser.updateMealPlan(action, index);
+		showNotif('Meal plan updated', 'success');
 		// 3. For save function, disable button; for delete function, remove meal from HTML
 		if (action === 'save') {
 			// To prevent being clicked again
@@ -631,6 +639,21 @@ function deleteChildNodes(parent) {
 	while (parent.firstChild) {
 		parent.removeChild(parent.firstChild);
 	}
+}
+// Creates alert notifications
+function showNotif(message, type) {
+	const getNotif = document.querySelector('.alert');
+	getNotif.innerHTML = message;
+	if (type === 'success') {
+		getNotif.className = 'alert alert-success';
+	} else {
+		getNotif.className = 'alert alert-warning';
+	}
+	getNotif.classList.add('active');
+
+	setTimeout(() => {
+		getNotif.className = 'alert';
+	}, 3000);
 }
 function displayFridgeLI(ingredient, index = activeUser.fridgeList.length) {
 	const getFridgeList = document.querySelector('#list-fridge');

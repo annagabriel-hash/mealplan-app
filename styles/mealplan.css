@@ -119,6 +119,14 @@ b {
 	white-space: nowrap;
 	max-width: 100%;
 }
+.alert-success:before {
+	content: 'Success: ';
+	font-weight: 700;
+}
+.alert-error:before {
+	content: 'Error: ';
+	font-weight: 700;
+}
 /* =====================
     C. COLOR STYLES
   ====================== 
@@ -153,7 +161,16 @@ input:hover {
 	color: #db4f6f;
 }
 /* || NOTIFICATIONS */
-
+.alert-success {
+	color: #038a7a;
+	background-color: rgb(132, 247, 209);
+	border-color: #32b36c;
+}
+.alert-error {
+	color: #92245d;
+	background-color: #fec9c6;
+	border-color: #d8527f;
+}
 /* =====================
     D. COMPONENTS
   ====================== 
@@ -256,7 +273,7 @@ select {
 	top: 50%;
 	transform: translateY(-50%);
 	right: 30px;
-	transition: all 200mx ease-in;
+	transition: all 200ms ease-in;
 }
 .custom-checkbox input:checked ~ label {
 	font-weight: 600;
@@ -336,24 +353,22 @@ select {
 	z-index: 2;
 	min-height: 500px;
 }
-/* || NOTIFICATION */
 
+/* || NOTIFICATIONS */
 .alert {
 	padding: 20px 40px;
 	min-width: 360px;
-	position: absolute;
-	top: 10px;
+	position: fixed;
+	top: -60px;
 	left: 50%;
 	transform: translateX(-50%);
 	border-radius: 6px;
+	transition: top 0.05s linear;
+	z-index: 10;
 }
-.alert-close {
-	padding: 20px 15px;
-	position: absolute;
-	right: 0px;
-	top: 0;
-	text-align: center;
+.alert.active {
 	cursor: pointer;
+	top: 10px;
 }
 /* || CARD */
 .cards {
