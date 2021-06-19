@@ -546,6 +546,10 @@ select {
 section:nth-child(1) {
 	position: relative;
 }
+#sec-login {
+	max-width: 600px;
+	margin: 0 auto;
+}
 /* section:nth-child(1) h2,
 section:nth-child(1) label {
 	/* color: rgb(255, 200, 0); */
