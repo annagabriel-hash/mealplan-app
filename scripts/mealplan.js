@@ -877,17 +877,20 @@ function displayRecipe(meal) {
 }
 function updateRecipeInfo(newRecipeInfo) {
 	recipesInfo = [...recipesInfo, ...newRecipeInfo];
+	// Store to local storage
+	localStorage.setItem('recipesInfo', JSON.stringify(recipesInfo));
 	return recipesInfo;
 }
 function extractIds(recipesList) {
 	return recipesList.map(({ id }) => id);
 }
 // Test Data
-recipesInfo = JSON.parse(localStorage.recipesInfo);
-mealsSearchList = JSON.parse(localStorage.getItem('mealsSearchList'));
-let testUser = JSON.parse(localStorage['mPlan.users'])[0];
-maintainUser(testUser, 'create');
-activeUser = maintainUser('AGABRIEL');
+// recipesInfo = JSON.parse(localStorage.recipesInfo);
+// let testUser = JSON.parse(localStorage['mPlan.users'])[0];
+const JSONtestUser = '{"username":"AGABRIEL","firstName":"ANNA","lastName":"GABRIEL","email":"y@g.com","password":"1234"}';
+localStorage.setItem('mPlan.users', JSONtestUser);
+maintainUser(JSON.parse(localStorage['mPlan.users']), 'create');
+/* activeUser = maintainUser('AGABRIEL');
 activeUser.fridgeList.push(...testUser.fridgeList);
 activeUser.mealsSearchList.push(...testUser.mealsSearchList);
 activeUser.mealPlans.push(...testUser.mealPlans);
@@ -896,3 +899,4 @@ const getMealSearch = document.querySelector('#meal-search-list');
 activeUser.mealsSearchList.forEach((mealResult) => {
 	displaymealSearch(getMealSearch, mealResult, 'Save');
 });
+ */
