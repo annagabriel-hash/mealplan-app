@@ -885,7 +885,9 @@ function extractIds(recipesList) {
 	return recipesList.map(({ id }) => id);
 }
 // Test Data
-// recipesInfo = JSON.parse(localStorage.recipesInfo);
+if (localStorage[recipesInfo] !== undefined) {
+	recipesInfo = JSON.parse(localStorage.recipesInfo);
+}
 // let testUser = JSON.parse(localStorage['mPlan.users'])[0];
 const JSONtestUser = '{"username":"AGABRIEL","firstName":"ANNA","lastName":"GABRIEL","email":"y@g.com","password":"1234"}';
 localStorage.setItem('mPlan.users', JSONtestUser);
