@@ -207,23 +207,23 @@ const FORM = {
 			await searchMeals(ingredients);
 			// 4. Extract mealSearch Ids
 			let recipeSearchIds = activeUser.mealsSearchList.map(({ id }) => id);
-			console.log('recipeSearchIds', recipeSearchIds);
+			// console.log('recipeSearchIds', recipeSearchIds);
 			// 5. Check which are not in the recipe cache
 			let recipeCacheIds = extractIds(recipesInfo);
 			recipeSearchIds = recipeSearchIds.filter((id) => !recipeCacheIds.includes(id));
-			console.log('recipeSearchIds', recipeSearchIds);
+			// console.log('recipeSearchIds', recipeSearchIds);
 			// 6. Search recipe information (not in cache)
 			if (recipeSearchIds.length !== 0) {
 				await searchRecipeInfo(recipeSearchIds);
 			}
 			// 7. Reset previous meal result
 			deleteChildNodes(getMealSearch);
-			// 7. Display recipe information
+			// 8. Display recipe information
 			getMealSearch.parentElement.classList.remove('d-none');
 			activeUser.mealsSearchList.forEach((mealResult) => {
 				displaymealSearch(getMealSearch, mealResult, 'Save');
 			});
-			// Scroll results into view
+			// 9. Scroll results into view
 			getMealSearch.parentElement.scrollIntoView();
 			window.scrollTo(0, window.pageYOffset - 190);
 		});
@@ -600,7 +600,6 @@ async function searchMeals(ingredients) {
 		// 2. Store data
 		const data = await response.json();
 		activeUser.addMealSearchList(data);
-		console.log('3. Request in API the meals that can be cooked\nDone fetching recipe info');
 	} catch (error) {
 		console.log(error);
 	}
